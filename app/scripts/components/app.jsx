@@ -1,7 +1,8 @@
 var React = require('react');
 var Cookies = require('js-cookie');
 
-var collections = require('../models/shirts').ShirtCollection;
+var collectionShirt = require('../models/shirts').ShirtCollection;
+var collectionCart = require('../models/shirts').CartCollection;
 
 
 
@@ -18,9 +19,16 @@ var UsernameBar = React.createClass({
   },
   render: function(){
     return (
-      <form onSubmit={this.props.handleLogin}>
-        <input onChange={this.handleUsernameChange} value={this.state.username} name="username" type="text" /><button>Submit</button>
-      </form>
+      <div className="col-md-6 top-bar">
+        <h4 className="title-bar">D9 Classy Hound T-shirts Shop</h4>
+        <div className="display-button"><a href="#">T-shirts</a></div>
+        <div className="display-button"><a href="#">Cart</a></div>
+        <form onSubmit={this.props.handleLogin} className="login-box">
+          <input onChange={this.handleUsernameChange} value={this.state.username} name="username" type="text" placeholder="Enter your user name..." className="login-button" />
+          <button className="btn btn-primary btn-xs">Login</button>
+          <span id="reg-link">Not registered? <a href="#">Sign up!</a></span>
+        </form>
+      </div>
     )
   }
 });
@@ -30,7 +38,9 @@ var ShirtList = React.createClass({
     var shirts = this.props.shirtCollection.map(function(shirtmodel){
       return
       <li key={shirtModel.cid}>
-        {shirtModel.get('name')}
+        {shirtModel.get('image')},
+        {shirtModel.get('name')},
+        {shirtModel.get('price')}
         <button onClick={function(){this.props.addToCart(shirtModel)}}>Add to Cart</button>
       </li>
     });
@@ -43,16 +53,17 @@ var ShirtList = React.createClass({
   }
 });
 
+
 var AppContainer = React.createClass({
   getInitialState: function(){
     var username = Cookies.get('username');
-    var shirtCollection = new collections.ShirtCollection();
-    var cartCollection = new collections.CartCollection();
+    var shirtCollection = new collectionShirt();
+    var cartCollection = new collectionCart();
 
     shirtCollection.add([
-      {name: 'Redhead Shirt', price: 10000},
-      {name: 'Bad Boy Shirt', price: 15000},
-      {name: 'U2 "We Old" 2016 Tour Shirt', price: 21000}
+      {image: '../../images/T-shirt_Image_10.jpg', name: 'Redhead Shirt', price: 10000},
+      {image: '../../images/T-shirt_Image_15.jpg', name: 'Bad Boy Shirt', price: 15000},
+      {image: '../../images/T-shirt_Image_04.jpg', name: 'Rolling Stones "We Old" 2016 Tour Shirt', price: 21000}
     ])
 
     return {username: username ? username : '',
@@ -64,6 +75,10 @@ var AppContainer = React.createClass({
     Cookies.set('username', username);
     this.setState({username: username});
   },
+  // handleShirtDiplay: function(){
+  //   e.preventDefault();
+  //   this.props.handleShirtDiplay(this.state.)
+  // }
   addToCart: function(shirtModel){
     var collection = this.state.cartCollection;
     collection.add(shirtModel);
